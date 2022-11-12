@@ -4,6 +4,7 @@ package ru.alishev.springcourse.FirstSecurityApp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -24,9 +25,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
+     * конфигурируем SS,
+     * какую форму для логина и пароля использовать
+     * как выводить ошибки и тд
+     * так же конфигурирует авторизацию
+     * (давать или не давать доступ к страницам на основании его статуса)
+     *
+     * правила
+     * */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // отключаем защиту от межсайтовой подделки запросов
+        http.csrf().disable()
+                // при вызове этого метода все запросы будут проходить через нашу авторизацию
+                .authorizeRequests()
+                // смотрим какой запрос пришел
+                // если на страницу "/auth/login" - то мы должны его пускать
+                .antMatchers("/auth/login", "/error").permitAll()
+                // на все остальные страницы мы не пускаем НЕ аутентифицированных пользователей
+                // необходимо пройти аутентификацию
+                .anyRequest().authenticated()
+                .and()
+                // настраиваем форму для логина
+                .formLogin().loginPage("/auth/login")
+                // обрабатывает post запрос
+                .loginProcessingUrl("/process_login")
+                // что будет происходить после успешной аутентификации
+                .defaultSuccessUrl("/hello", true)
+                // в случае не успешной аутентификации
+                .failureUrl("/auth/login?error");
+    }
+
+    /**
      * настраивает аутентификацию
      * даем понять SS, что мы используем этот authProvider для аутентификации пользователей
      */
+    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(personDetailsService);
     }
