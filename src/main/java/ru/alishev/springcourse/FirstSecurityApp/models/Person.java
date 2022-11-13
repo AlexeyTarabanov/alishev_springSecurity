@@ -19,6 +19,7 @@ public class Person {
     @Min(value = 1900, message = "Год рождения должен быть больше, чем 1900")
     @Column(name = "year_of_birth")
     private int yearOfBirth;
+    @NotEmpty(message = "Поле пароль не должно быть пустым")
     @Column(name = "password")
     private String password;
 

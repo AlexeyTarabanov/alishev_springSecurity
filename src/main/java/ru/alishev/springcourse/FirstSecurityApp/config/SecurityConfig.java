@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // смотрим какой запрос пришел
                 // если на страницу "/auth/login" - то мы должны его пускать
-                .antMatchers("/auth/login", "/error").permitAll()
+                .antMatchers("/auth/login", "/auth/registration", "/error").permitAll()
                 // на все остальные страницы мы не пускаем НЕ аутентифицированных пользователей
                 // необходимо пройти аутентификацию
                 .anyRequest().authenticated()
