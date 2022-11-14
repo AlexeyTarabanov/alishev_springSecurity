@@ -53,7 +53,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // что будет происходить после успешной аутентификации
                 .defaultSuccessUrl("/hello", true)
                 // в случае не успешной аутентификации
-                .failureUrl("/auth/login?error");
+                .failureUrl("/auth/login?error")
+                .and()
+                // конфигурация logout (у браузера (приложения) стирается сессия и пользователя удаляются кукис)
+                .logout()
+                .logoutUrl("/logout")
+                // redirect если рзлогинелся
+                .logoutSuccessUrl("/auth/login");
     }
 
     /**
